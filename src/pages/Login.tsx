@@ -1,0 +1,116 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+import { ArrowLeft, LogIn, UserPlus } from "lucide-react";
+
+const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Placeholder - needs Lovable Cloud
+    window.location.href = "/dashboard";
+  };
+
+  return (
+    <div className="min-h-screen bg-background circuit-pattern flex items-center justify-center px-4">
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md relative z-10"
+      >
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8">
+          <ArrowLeft size={16} />
+          <span className="text-sm">Voltar ao site</span>
+        </Link>
+
+        <div className="bg-card border border-border rounded-2xl p-8">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-heading font-black text-sm">G</span>
+            </div>
+            <span className="font-heading font-bold text-foreground text-lg">GCell</span>
+          </div>
+
+          <h1 className="text-2xl font-heading font-bold text-foreground mb-2">
+            {isLogin ? "Entrar" : "Criar Conta"}
+          </h1>
+          <p className="text-muted-foreground text-sm mb-6">
+            {isLogin
+              ? "Acesse sua conta para acompanhar seus serviços"
+              : "Cadastre-se para solicitar serviços"}
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <>
+                <Input
+                  placeholder="Nome completo"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="bg-background border-border"
+                />
+                <Input
+                  placeholder="Telefone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  className="bg-background border-border"
+                />
+              </>
+            )}
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="bg-background border-border"
+            />
+            <Input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="bg-background border-border"
+            />
+            <Button variant="hero" className="w-full" type="submit">
+              {isLogin ? (
+                <>
+                  <LogIn size={16} />
+                  Entrar
+                </>
+              ) : (
+                <>
+                  <UserPlus size={16} />
+                  Criar Conta
+                </>
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              {isLogin ? "Não tem conta? Cadastre-se" : "Já tem conta? Entre"}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Login;
