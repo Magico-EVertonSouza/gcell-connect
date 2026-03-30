@@ -1,14 +1,20 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import {
-  Plus, Clock, CheckCircle, Wrench, Eye, LogOut,
-  Smartphone, CalendarDays, FileText
+  Plus, Clock, CheckCircle, Wrench, LogOut,
+  Smartphone, CalendarDays, FileText, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import type { Tables } from "@/integrations/supabase/types";
 
 const statusColors: Record<string, string> = {
   received: "bg-blue-500",
@@ -28,25 +34,129 @@ const statusLabels: Record<string, string> = {
   ready: "Pronto para Retirada",
 };
 
-const mockOrders = [
-  { id: "OS-2024-0042", device: "iPhone 13 Pro", problem: "Tela trincada", status: "repairing", date: "2024-03-15", estimate: "2024-03-18" },
-  { id: "OS-2024-0038", device: "Samsung S23", problem: "Não carrega", status: "ready", date: "2024-03-10", estimate: "2024-03-14" },
-  { id: "OS-2024-0031", device: "Xiaomi 12", problem: "Placa danificada", status: "done", date: "2024-02-20", estimate: "2024-02-25" },
+const timeSlots = [
+  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
 ];
 
 const ClientDashboard = () => {
+  const { user, profile, signOut, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [showNewOrder, setShowNewOrder] = useState(false);
   const [tab, setTab] = useState<"orders" | "schedule">("orders");
+  const [orders, setOrders] = useState<Tables<"service_orders">[]>([]);
+  const [appointments, setAppointments] = useState<Tables<"appointments">[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
+  const [device, setDevice] = useState("");
+  const [problem, setProblem] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleNewOrder = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Solicitação enviada! Entraremos em contato para o diagnóstico.");
-    setShowNewOrder(false);
+  // Schedule state
+  const [schedDate, setSchedDate] = useState<Date | undefined>();
+  const [schedTime, setSchedTime] = useState("");
+  const [schedDevice, setSchedDevice] = useState("");
+  const [schedDesc, setSchedDesc] = useState("");
+  const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/login");
+    }
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (user) fetchData();
+  }, [user]);
+
+  useEffect(() => {
+    if (schedDate) fetchBookedTimes(schedDate);
+  }, [schedDate]);
+
+  const fetchData = async () => {
+    setLoadingData(true);
+    const [ordersRes, apptRes] = await Promise.all([
+      supabase.from("service_orders").select("*").order("created_at", { ascending: false }),
+      supabase.from("appointments").select("*").order("appointment_date", { ascending: true }),
+    ]);
+    if (ordersRes.data) setOrders(ordersRes.data);
+    if (apptRes.data) setAppointments(apptRes.data);
+    setLoadingData(false);
   };
+
+  const fetchBookedTimes = async (date: Date) => {
+    const dateStr = format(date, "yyyy-MM-dd");
+    const { data } = await supabase
+      .from("appointments")
+      .select("appointment_time")
+      .eq("appointment_date", dateStr);
+    setBookedTimes(data?.map((a) => a.appointment_time.slice(0, 5)) ?? []);
+  };
+
+  const handleNewOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setSubmitting(true);
+    const { error } = await supabase.from("service_orders").insert({
+      user_id: user.id,
+      device,
+      problem,
+      order_number: "temp",
+    });
+    if (error) {
+      toast.error("Erro ao enviar solicitação.");
+    } else {
+      toast.success("Solicitação enviada! Entraremos em contato para o diagnóstico.");
+      setDevice("");
+      setProblem("");
+      setShowNewOrder(false);
+      fetchData();
+    }
+    setSubmitting(false);
+  };
+
+  const handleSchedule = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !schedDate || !schedTime) return;
+    setSubmitting(true);
+    const { error } = await supabase.from("appointments").insert({
+      user_id: user.id,
+      appointment_date: format(schedDate, "yyyy-MM-dd"),
+      appointment_time: schedTime,
+      device: schedDevice,
+      description: schedDesc || null,
+    });
+    if (error) {
+      if (error.code === "23505") {
+        toast.error("Este horário já está ocupado. Escolha outro.");
+      } else {
+        toast.error("Erro ao agendar.");
+      }
+    } else {
+      toast.success("Agendamento realizado com sucesso!");
+      setSchedDate(undefined);
+      setSchedTime("");
+      setSchedDevice("");
+      setSchedDesc("");
+      fetchData();
+    }
+    setSubmitting(false);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-xl">
         <div className="container mx-auto px-4 flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
@@ -55,12 +165,10 @@ const ClientDashboard = () => {
             </div>
             <span className="font-heading font-bold text-foreground">GCell</span>
           </div>
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="text-muted-foreground">
-              <LogOut size={16} />
-              Sair
-            </Button>
-          </Link>
+          <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={handleLogout}>
+            <LogOut size={16} />
+            Sair
+          </Button>
         </div>
       </header>
 
@@ -68,7 +176,9 @@ const ClientDashboard = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl font-heading font-bold text-foreground">Olá, Cliente!</h1>
+              <h1 className="text-2xl font-heading font-bold text-foreground">
+                Olá, {profile?.full_name || "Cliente"}!
+              </h1>
               <p className="text-muted-foreground text-sm">Gerencie seus serviços e agendamentos</p>
             </div>
             <Button variant="hero" onClick={() => setShowNewOrder(true)}>
@@ -97,41 +207,138 @@ const ClientDashboard = () => {
 
           {tab === "orders" && (
             <div className="space-y-4">
-              {mockOrders.map((order) => (
-                <motion.div
-                  key={order.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-card border border-border rounded-xl p-5 hover:border-primary/20 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Smartphone size={18} className="text-primary" />
+              {loadingData ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="animate-spin text-primary" size={24} />
+                </div>
+              ) : orders.length === 0 ? (
+                <div className="bg-card border border-border rounded-xl p-8 text-center">
+                  <Smartphone size={48} className="text-primary/30 mx-auto mb-4" />
+                  <p className="text-muted-foreground">Nenhum serviço ainda.</p>
+                  <p className="text-muted-foreground text-sm mt-1">Clique em "Novo Serviço" para solicitar.</p>
+                </div>
+              ) : (
+                orders.map((order) => (
+                  <motion.div
+                    key={order.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-card border border-border rounded-xl p-5 hover:border-primary/20 transition-colors"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Smartphone size={18} className="text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-heading font-bold text-foreground text-sm">{order.order_number}</p>
+                          <p className="text-muted-foreground text-xs">{order.device} — {order.problem}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-heading font-bold text-foreground text-sm">{order.id}</p>
-                        <p className="text-muted-foreground text-xs">{order.device} — {order.problem}</p>
+                      <div className={`px-3 py-1 rounded-full text-xs font-bold ${statusColors[order.status]} text-primary-foreground`}>
+                        {statusLabels[order.status]}
                       </div>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold ${statusColors[order.status]} text-primary-foreground`}>
-                      {statusLabels[order.status]}
+                    <div className="flex gap-6 mt-4 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Clock size={12} /> Entrada: {format(new Date(order.entry_date), "dd/MM/yyyy")}
+                      </span>
+                      {order.estimated_date && (
+                        <span className="flex items-center gap-1">
+                          <CheckCircle size={12} /> Previsão: {format(new Date(order.estimated_date), "dd/MM/yyyy")}
+                        </span>
+                      )}
                     </div>
-                  </div>
-                  <div className="flex gap-6 mt-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Clock size={12} /> Entrada: {order.date}</span>
-                    <span className="flex items-center gap-1"><CheckCircle size={12} /> Previsão: {order.estimate}</span>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))
+              )}
             </div>
           )}
 
           {tab === "schedule" && (
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <CalendarDays size={48} className="text-primary/30 mx-auto mb-4" />
-              <p className="text-muted-foreground">Sistema de agendamento será ativado com o backend.</p>
-              <p className="text-muted-foreground text-sm mt-1">Em breve você poderá agendar atendimentos diretamente por aqui.</p>
+            <div className="space-y-6">
+              {/* Existing appointments */}
+              {appointments.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-sm font-heading font-bold text-foreground">Seus Agendamentos</h3>
+                  {appointments.map((appt) => (
+                    <div key={appt.id} className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-foreground font-medium text-sm">{appt.device}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {format(new Date(appt.appointment_date + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })} às {appt.appointment_time.slice(0, 5)}
+                        </p>
+                      </div>
+                      <div className={`px-3 py-1 rounded-full text-xs font-bold ${appt.confirmed ? "bg-primary" : "bg-yellow-500"} text-primary-foreground`}>
+                        {appt.confirmed ? "Confirmado" : "Pendente"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* New appointment form */}
+              <div className="bg-card border border-border rounded-xl p-6">
+                <h3 className="text-lg font-heading font-bold text-foreground mb-4">Agendar Atendimento</h3>
+                <form onSubmit={handleSchedule} className="space-y-4">
+                  <Input
+                    placeholder="Aparelho (ex: iPhone 13)"
+                    value={schedDevice}
+                    onChange={(e) => setSchedDevice(e.target.value)}
+                    required
+                    className="bg-background border-border"
+                  />
+                  <Textarea
+                    placeholder="Descrição (opcional)"
+                    value={schedDesc}
+                    onChange={(e) => setSchedDesc(e.target.value)}
+                    className="bg-background border-border"
+                    rows={2}
+                  />
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Selecione a data:</p>
+                    <Calendar
+                      mode="single"
+                      selected={schedDate}
+                      onSelect={setSchedDate}
+                      disabled={(date) => date < new Date() || date.getDay() === 0}
+                      className="rounded-xl border border-border bg-background"
+                      locale={ptBR}
+                    />
+                  </div>
+                  {schedDate && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">Horários disponíveis:</p>
+                      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                        {timeSlots.map((time) => {
+                          const booked = bookedTimes.includes(time);
+                          return (
+                            <button
+                              key={time}
+                              type="button"
+                              disabled={booked}
+                              onClick={() => setSchedTime(time)}
+                              className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                                schedTime === time
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : booked
+                                  ? "bg-muted text-muted-foreground border-border opacity-50 cursor-not-allowed"
+                                  : "bg-background text-foreground border-border hover:border-primary/50"
+                              }`}
+                            >
+                              {time}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  <Button variant="hero" type="submit" disabled={!schedDate || !schedTime || !schedDevice || submitting} className="w-full">
+                    <CalendarDays size={16} />
+                    {submitting ? "Agendando..." : "Confirmar Agendamento"}
+                  </Button>
+                </form>
+              </div>
             </div>
           )}
         </motion.div>
@@ -146,12 +353,25 @@ const ClientDashboard = () => {
             >
               <h2 className="text-xl font-heading font-bold text-foreground mb-4">Solicitar Serviço</h2>
               <form onSubmit={handleNewOrder} className="space-y-4">
-                <Input placeholder="Aparelho (ex: iPhone 13)" className="bg-background border-border" required />
-                <Textarea placeholder="Descreva o problema" className="bg-background border-border" rows={3} required />
+                <Input
+                  placeholder="Aparelho (ex: iPhone 13)"
+                  value={device}
+                  onChange={(e) => setDevice(e.target.value)}
+                  className="bg-background border-border"
+                  required
+                />
+                <Textarea
+                  placeholder="Descreva o problema"
+                  value={problem}
+                  onChange={(e) => setProblem(e.target.value)}
+                  className="bg-background border-border"
+                  rows={3}
+                  required
+                />
                 <div className="flex gap-3">
-                  <Button variant="hero" type="submit" className="flex-1">
+                  <Button variant="hero" type="submit" className="flex-1" disabled={submitting}>
                     <Wrench size={16} />
-                    Enviar Solicitação
+                    {submitting ? "Enviando..." : "Enviar Solicitação"}
                   </Button>
                   <Button variant="outline" type="button" onClick={() => setShowNewOrder(false)}>
                     Cancelar

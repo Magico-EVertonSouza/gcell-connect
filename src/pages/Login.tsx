@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { ArrowLeft, LogIn, UserPlus } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,11 +13,27 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { signIn, signUp } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder - needs Lovable Cloud
-    window.location.href = "/dashboard";
+    setSubmitting(true);
+    try {
+      if (isLogin) {
+        await signIn(email, password);
+        toast.success("Login realizado com sucesso!");
+        navigate("/dashboard");
+      } else {
+        await signUp(email, password, name, phone);
+        toast.success("Conta criada! Verifique seu email para confirmar.");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao processar. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -82,18 +100,19 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
               className="bg-background border-border"
             />
-            <Button variant="hero" className="w-full" type="submit">
+            <Button variant="hero" className="w-full" type="submit" disabled={submitting}>
               {isLogin ? (
                 <>
                   <LogIn size={16} />
-                  Entrar
+                  {submitting ? "Entrando..." : "Entrar"}
                 </>
               ) : (
                 <>
                   <UserPlus size={16} />
-                  Criar Conta
+                  {submitting ? "Criando..." : "Criar Conta"}
                 </>
               )}
             </Button>
