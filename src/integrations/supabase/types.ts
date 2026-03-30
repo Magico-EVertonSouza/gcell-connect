@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_date: string
+          appointment_time: string
+          confirmed: boolean
+          created_at: string
+          description: string | null
+          device: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          appointment_date: string
+          appointment_time: string
+          confirmed?: boolean
+          created_at?: string
+          description?: string | null
+          device: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          appointment_date?: string
+          appointment_time?: string
+          confirmed?: boolean
+          created_at?: string
+          description?: string | null
+          device?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      service_orders: {
+        Row: {
+          created_at: string
+          device: string
+          entry_date: string
+          estimated_date: string | null
+          id: string
+          notes: string | null
+          order_number: string
+          problem: string
+          status: Database["public"]["Enums"]["service_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device: string
+          entry_date?: string
+          estimated_date?: string | null
+          id?: string
+          notes?: string | null
+          order_number: string
+          problem: string
+          status?: Database["public"]["Enums"]["service_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device?: string
+          entry_date?: string
+          estimated_date?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: string
+          problem?: string
+          status?: Database["public"]["Enums"]["service_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +127,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      service_status:
+        | "received"
+        | "analysis"
+        | "waiting"
+        | "repairing"
+        | "done"
+        | "ready"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +260,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      service_status: [
+        "received",
+        "analysis",
+        "waiting",
+        "repairing",
+        "done",
+        "ready",
+      ],
+    },
   },
 } as const
