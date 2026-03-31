@@ -257,9 +257,9 @@ const AdminDashboard = () => {
                             </span>
                           </div>
                           <p className="text-muted-foreground text-xs truncate">{order.device} — {order.problem}</p>
-                          {(order as any).profiles && (
+                          {profileMap[order.user_id] && (
                             <p className="text-muted-foreground text-xs mt-0.5">
-                              Cliente: {(order as any).profiles.full_name} {(order as any).profiles.phone && `| ${(order as any).profiles.phone}`}
+                              Cliente: {profileMap[order.user_id].full_name} {profileMap[order.user_id].phone && `| ${profileMap[order.user_id].phone}`}
                             </p>
                           )}
                         </div>
