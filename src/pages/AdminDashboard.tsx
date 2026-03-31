@@ -52,6 +52,7 @@ const AdminDashboard = () => {
   const [tab, setTab] = useState<"orders" | "clients" | "schedule">("orders");
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
   const [clients, setClients] = useState<Profile[]>([]);
+  const [profileMap, setProfileMap] = useState<ProfileMap>({});
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [search, setSearch] = useState("");
