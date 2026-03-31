@@ -407,7 +407,7 @@ const AdminDashboard = () => {
                             <p className="text-foreground font-medium text-sm">{appt.device}</p>
                             <p className="text-muted-foreground text-xs">
                               {format(new Date(appt.appointment_date + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })} às {appt.appointment_time.slice(0, 5)}
-                              {(appt as any).profiles && ` — ${(appt as any).profiles.full_name}`}
+                              {profileMap[appt.user_id] && ` — ${profileMap[appt.user_id].full_name}`}
                             </p>
                           </div>
                           <div className={`px-3 py-1 rounded-full text-xs font-bold ${appt.confirmed ? "bg-primary" : "bg-yellow-500"} text-primary-foreground`}>
