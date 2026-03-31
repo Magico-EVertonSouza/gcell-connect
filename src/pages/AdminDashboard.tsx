@@ -72,24 +72,17 @@ const AdminDashboard = () => {
   const fetchAll = async () => {
     setLoadingData(true);
     const [ordersRes, clientsRes, apptsRes] = await Promise.all([
-      supabase.from("service_orders").select("*, profiles!service_orders_user_id_fkey(full_name, phone)").order("created_at", { ascending: false }),
+      supabase.from("service_orders").select("*").order("created_at", { ascending: false }),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-      supabase.from("appointments").select("*, profiles!appointments_user_id_fkey(full_name, phone)").order("appointment_date", { ascending: true }),
+      supabase.from("appointments").select("*").order("appointment_date", { ascending: true }),
     ]);
-    // Fallback: if join fails, just load without join
-    if (ordersRes.error) {
-      const { data } = await supabase.from("service_orders").select("*").order("created_at", { ascending: false });
-      setOrders((data as ServiceOrder[]) ?? []);
-    } else {
-      setOrders((ordersRes.data as ServiceOrder[]) ?? []);
-    }
-    setClients(clientsRes.data ?? []);
-    if (apptsRes.error) {
-      const { data } = await supabase.from("appointments").select("*").order("appointment_date", { ascending: true });
-      setAppointments((data as Appointment[]) ?? []);
-    } else {
-      setAppointments((apptsRes.data as Appointment[]) ?? []);
-    }
+    setOrders(ordersRes.data ?? []);
+    const profs = clientsRes.data ?? [];
+    setClients(profs);
+    const map: ProfileMap = {};
+    profs.forEach(p => { map[p.user_id] = p; });
+    setProfileMap(map);
+    setAppointments(apptsRes.data ?? []);
     setLoadingData(false);
   };
 
