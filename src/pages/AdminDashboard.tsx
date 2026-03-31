@@ -373,8 +373,8 @@ const AdminDashboard = () => {
                             </div>
                             <div>
                               <p className="text-foreground font-medium text-sm">{appt.device}</p>
-                              {(appt as any).profiles && (
-                                <p className="text-muted-foreground text-xs">{(appt as any).profiles.full_name}</p>
+                              {profileMap[appt.user_id] && (
+                                <p className="text-muted-foreground text-xs">{profileMap[appt.user_id].full_name}</p>
                               )}
                               {appt.description && <p className="text-muted-foreground text-xs mt-0.5">{appt.description}</p>}
                             </div>
