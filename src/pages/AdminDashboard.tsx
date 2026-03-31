@@ -39,8 +39,10 @@ const allStatuses: Enums<"service_status">[] = [
 ];
 
 type Profile = Tables<"profiles">;
-type ServiceOrder = Tables<"service_orders"> & { profiles?: Profile };
-type Appointment = Tables<"appointments"> & { profiles?: Profile };
+type ServiceOrder = Tables<"service_orders">;
+type Appointment = Tables<"appointments">;
+
+type ProfileMap = Record<string, Profile>;
 
 const AdminDashboard = () => {
   const { user, signOut, loading: authLoading } = useAuth();
