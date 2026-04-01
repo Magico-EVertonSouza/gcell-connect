@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import {
   LogOut, Users, FileText, CalendarDays, Search,
-  Loader2, Smartphone, Clock, ChevronDown, RefreshCw
+  Loader2, Smartphone, Clock, ChevronDown, RefreshCw,
+  Plus, XCircle, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -111,6 +112,39 @@ const AdminDashboard = () => {
       toast.success("Agendamento confirmado!");
       fetchAll();
     }
+  };
+
+  const rejectAppointment = async (id: string) => {
+    const { error } = await supabase
+      .from("appointments")
+      .delete()
+      .eq("id", id);
+    if (error) toast.error("Erro ao recusar agendamento.");
+    else {
+      toast.success("Agendamento recusado e removido.");
+      fetchAll();
+    }
+  };
+
+  const generateOrderFromAppointment = async (appt: Appointment) => {
+    setUpdatingId(appt.id);
+    const { data, error } = await supabase
+      .from("service_orders")
+      .insert({
+        user_id: appt.user_id,
+        device: appt.device,
+        problem: appt.description || "Conforme agendamento",
+        order_number: "TEMP", // trigger will generate
+      })
+      .select()
+      .single();
+    if (error) {
+      toast.error("Erro ao gerar ordem de serviço.");
+    } else {
+      toast.success(`OS ${data.order_number} gerada com sucesso!`);
+      fetchAll();
+    }
+    setUpdatingId(null);
   };
 
   const handleLogout = async () => {
@@ -365,26 +399,48 @@ const AdminDashboard = () => {
                           key={appt.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="bg-card border border-border rounded-xl p-4 flex items-center justify-between"
+                          className="bg-card border border-border rounded-xl p-4"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-lg bg-primary/10 flex flex-col items-center justify-center">
-                              <span className="text-primary font-heading font-bold text-sm">{appt.appointment_time.slice(0, 5)}</span>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-lg bg-primary/10 flex flex-col items-center justify-center">
+                                <span className="text-primary font-heading font-bold text-sm">{appt.appointment_time.slice(0, 5)}</span>
+                              </div>
+                              <div>
+                                <p className="text-foreground font-medium text-sm">{appt.device}</p>
+                                {profileMap[appt.user_id] && (
+                                  <p className="text-muted-foreground text-xs">{profileMap[appt.user_id].full_name}</p>
+                                )}
+                                {appt.description && <p className="text-muted-foreground text-xs mt-0.5">{appt.description}</p>}
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-foreground font-medium text-sm">{appt.device}</p>
-                              {profileMap[appt.user_id] && (
-                                <p className="text-muted-foreground text-xs">{profileMap[appt.user_id].full_name}</p>
+                            <div className="flex items-center gap-2">
+                              {!appt.confirmed ? (
+                                <>
+                                  <Button variant="hero" size="sm" onClick={() => confirmAppointment(appt.id)}>
+                                    <CheckCircle size={14} /> Confirmar
+                                  </Button>
+                                  <Button variant="destructive" size="sm" onClick={() => rejectAppointment(appt.id)}>
+                                    <XCircle size={14} /> Recusar
+                                  </Button>
+                                </>
+                              ) : (
+                                <Badge className="bg-primary/20 text-primary border-primary/30">Confirmado</Badge>
                               )}
-                              {appt.description && <p className="text-muted-foreground text-xs mt-0.5">{appt.description}</p>}
                             </div>
                           </div>
-                          {!appt.confirmed ? (
-                            <Button variant="hero" size="sm" onClick={() => confirmAppointment(appt.id)}>
-                              Confirmar
-                            </Button>
-                          ) : (
-                            <Badge className="bg-primary/20 text-primary border-primary/30">Confirmado</Badge>
+                          {appt.confirmed && (
+                            <div className="mt-3 pt-3 border-t border-border flex justify-end">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={updatingId === appt.id}
+                                onClick={() => generateOrderFromAppointment(appt)}
+                              >
+                                {updatingId === appt.id ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                                Gerar OS
+                              </Button>
+                            </div>
                           )}
                         </motion.div>
                       ))}
@@ -402,16 +458,40 @@ const AdminDashboard = () => {
                   ) : (
                     <div className="space-y-2">
                       {appointments.map(appt => (
-                        <div key={appt.id} className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
-                          <div>
-                            <p className="text-foreground font-medium text-sm">{appt.device}</p>
-                            <p className="text-muted-foreground text-xs">
-                              {format(new Date(appt.appointment_date + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })} às {appt.appointment_time.slice(0, 5)}
-                              {profileMap[appt.user_id] && ` — ${profileMap[appt.user_id].full_name}`}
-                            </p>
-                          </div>
-                          <div className={`px-3 py-1 rounded-full text-xs font-bold ${appt.confirmed ? "bg-primary" : "bg-yellow-500"} text-primary-foreground`}>
-                            {appt.confirmed ? "Confirmado" : "Pendente"}
+                        <div key={appt.id} className="bg-card border border-border rounded-xl p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-foreground font-medium text-sm">{appt.device}</p>
+                              <p className="text-muted-foreground text-xs">
+                                {format(new Date(appt.appointment_date + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })} às {appt.appointment_time.slice(0, 5)}
+                                {profileMap[appt.user_id] && ` — ${profileMap[appt.user_id].full_name}`}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {!appt.confirmed ? (
+                                <>
+                                  <Button variant="hero" size="sm" onClick={() => confirmAppointment(appt.id)}>
+                                    <CheckCircle size={14} /> Confirmar
+                                  </Button>
+                                  <Button variant="destructive" size="sm" onClick={() => rejectAppointment(appt.id)}>
+                                    <XCircle size={14} />
+                                  </Button>
+                                </>
+                              ) : (
+                                <Badge className="bg-primary/20 text-primary border-primary/30">Confirmado</Badge>
+                              )}
+                              {appt.confirmed && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={updatingId === appt.id}
+                                  onClick={() => generateOrderFromAppointment(appt)}
+                                >
+                                  {updatingId === appt.id ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                                  Gerar OS
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
