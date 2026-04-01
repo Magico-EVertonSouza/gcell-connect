@@ -114,6 +114,39 @@ const AdminDashboard = () => {
     }
   };
 
+  const rejectAppointment = async (id: string) => {
+    const { error } = await supabase
+      .from("appointments")
+      .delete()
+      .eq("id", id);
+    if (error) toast.error("Erro ao recusar agendamento.");
+    else {
+      toast.success("Agendamento recusado e removido.");
+      fetchAll();
+    }
+  };
+
+  const generateOrderFromAppointment = async (appt: Appointment) => {
+    setUpdatingId(appt.id);
+    const { data, error } = await supabase
+      .from("service_orders")
+      .insert({
+        user_id: appt.user_id,
+        device: appt.device,
+        problem: appt.description || "Conforme agendamento",
+        order_number: "TEMP", // trigger will generate
+      })
+      .select()
+      .single();
+    if (error) {
+      toast.error("Erro ao gerar ordem de serviço.");
+    } else {
+      toast.success(`OS ${data.order_number} gerada com sucesso!`);
+      fetchAll();
+    }
+    setUpdatingId(null);
+  };
+
   const handleLogout = async () => {
     await signOut();
     navigate("/");
