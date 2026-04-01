@@ -51,13 +51,9 @@ const Login = () => {
         </Link>
 
         <div className="bg-card border border-border rounded-2xl p-8">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-heading font-black text-sm">G</span>
-            </div>
-            <span className="font-heading font-bold text-foreground text-lg">GCell</span>
+          <div className="flex items-center justify-center mb-6">
+          <img src="/logo.png" alt="GCell" className="h-16 md:h-20 lg:h-24" />
           </div>
-
           <h1 className="text-2xl font-heading font-bold text-foreground mb-2">
             {isLogin ? "Entrar" : "Criar Conta"}
           </h1>
