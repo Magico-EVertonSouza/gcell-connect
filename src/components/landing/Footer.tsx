@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Laboratório GCell" className="h-20 md:h-24 lg:h-18" />
+            <img src="/logo.png" alt="Laboratório GGCell" className="h-20 md:h-24 lg:h-18" />
           </div>
 
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -17,7 +17,7 @@ const Footer = () => {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            © 2024 Laboratório GCell. Todos os direitos reservados.
+            © 2024 Laboratório GGCell. Todos os direitos reservados.
           </p>
         </div>
       </div>
