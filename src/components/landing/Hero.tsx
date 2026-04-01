@@ -24,15 +24,15 @@ const Hero = () => {
             </div>
           </motion.div>
 
-          <motion.h1
+          {/* Logo animada */}
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-heading font-black mb-6 leading-tight"
+            className="mb-6 flex justify-center"
           >
-            Laboratório{" "}
-            <span className="gradient-text text-glow">GCell</span>
-          </motion.h1>
+            <img src="/logo.png" alt="Laboratório GCell" className="h-32 md:h-40 lg:h-48" />
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
