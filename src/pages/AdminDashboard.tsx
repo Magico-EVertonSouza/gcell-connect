@@ -399,26 +399,48 @@ const AdminDashboard = () => {
                           key={appt.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="bg-card border border-border rounded-xl p-4 flex items-center justify-between"
+                          className="bg-card border border-border rounded-xl p-4"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-lg bg-primary/10 flex flex-col items-center justify-center">
-                              <span className="text-primary font-heading font-bold text-sm">{appt.appointment_time.slice(0, 5)}</span>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-lg bg-primary/10 flex flex-col items-center justify-center">
+                                <span className="text-primary font-heading font-bold text-sm">{appt.appointment_time.slice(0, 5)}</span>
+                              </div>
+                              <div>
+                                <p className="text-foreground font-medium text-sm">{appt.device}</p>
+                                {profileMap[appt.user_id] && (
+                                  <p className="text-muted-foreground text-xs">{profileMap[appt.user_id].full_name}</p>
+                                )}
+                                {appt.description && <p className="text-muted-foreground text-xs mt-0.5">{appt.description}</p>}
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-foreground font-medium text-sm">{appt.device}</p>
-                              {profileMap[appt.user_id] && (
-                                <p className="text-muted-foreground text-xs">{profileMap[appt.user_id].full_name}</p>
+                            <div className="flex items-center gap-2">
+                              {!appt.confirmed ? (
+                                <>
+                                  <Button variant="hero" size="sm" onClick={() => confirmAppointment(appt.id)}>
+                                    <CheckCircle size={14} /> Confirmar
+                                  </Button>
+                                  <Button variant="destructive" size="sm" onClick={() => rejectAppointment(appt.id)}>
+                                    <XCircle size={14} /> Recusar
+                                  </Button>
+                                </>
+                              ) : (
+                                <Badge className="bg-primary/20 text-primary border-primary/30">Confirmado</Badge>
                               )}
-                              {appt.description && <p className="text-muted-foreground text-xs mt-0.5">{appt.description}</p>}
                             </div>
                           </div>
-                          {!appt.confirmed ? (
-                            <Button variant="hero" size="sm" onClick={() => confirmAppointment(appt.id)}>
-                              Confirmar
-                            </Button>
-                          ) : (
-                            <Badge className="bg-primary/20 text-primary border-primary/30">Confirmado</Badge>
+                          {appt.confirmed && (
+                            <div className="mt-3 pt-3 border-t border-border flex justify-end">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={updatingId === appt.id}
+                                onClick={() => generateOrderFromAppointment(appt)}
+                              >
+                                {updatingId === appt.id ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                                Gerar OS
+                              </Button>
+                            </div>
                           )}
                         </motion.div>
                       ))}
