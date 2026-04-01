@@ -458,16 +458,40 @@ const AdminDashboard = () => {
                   ) : (
                     <div className="space-y-2">
                       {appointments.map(appt => (
-                        <div key={appt.id} className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
-                          <div>
-                            <p className="text-foreground font-medium text-sm">{appt.device}</p>
-                            <p className="text-muted-foreground text-xs">
-                              {format(new Date(appt.appointment_date + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })} às {appt.appointment_time.slice(0, 5)}
-                              {profileMap[appt.user_id] && ` — ${profileMap[appt.user_id].full_name}`}
-                            </p>
-                          </div>
-                          <div className={`px-3 py-1 rounded-full text-xs font-bold ${appt.confirmed ? "bg-primary" : "bg-yellow-500"} text-primary-foreground`}>
-                            {appt.confirmed ? "Confirmado" : "Pendente"}
+                        <div key={appt.id} className="bg-card border border-border rounded-xl p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-foreground font-medium text-sm">{appt.device}</p>
+                              <p className="text-muted-foreground text-xs">
+                                {format(new Date(appt.appointment_date + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })} às {appt.appointment_time.slice(0, 5)}
+                                {profileMap[appt.user_id] && ` — ${profileMap[appt.user_id].full_name}`}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {!appt.confirmed ? (
+                                <>
+                                  <Button variant="hero" size="sm" onClick={() => confirmAppointment(appt.id)}>
+                                    <CheckCircle size={14} /> Confirmar
+                                  </Button>
+                                  <Button variant="destructive" size="sm" onClick={() => rejectAppointment(appt.id)}>
+                                    <XCircle size={14} />
+                                  </Button>
+                                </>
+                              ) : (
+                                <Badge className="bg-primary/20 text-primary border-primary/30">Confirmado</Badge>
+                              )}
+                              {appt.confirmed && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={updatingId === appt.id}
+                                  onClick={() => generateOrderFromAppointment(appt)}
+                                >
+                                  {updatingId === appt.id ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                                  Gerar OS
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
