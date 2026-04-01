@@ -17,9 +17,12 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
+        
+        {/* LOGO */}
         <Link to="/" className="flex items-center gap-2">
-          <img src="/placeholder.svg" className="h-8" />
-          </span>
+          <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
+          <span className="font-heading font-bold text-foreground text-lg">
+            GCell
           </span>
         </Link>
 
@@ -69,7 +72,9 @@ const Navbar = () => {
                 </a>
               ))}
               <Link to="/login" onClick={() => setIsOpen(false)}>
-                <Button variant="hero" size="sm" className="w-full">Área do Cliente</Button>
+                <Button variant="hero" size="sm" className="w-full">
+                  Área do Cliente
+                </Button>
               </Link>
             </div>
           </motion.div>
