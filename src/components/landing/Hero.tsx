@@ -21,7 +21,7 @@ const Hero = () => {
             <img
               src="/logo.png"
               alt="Laboratório GCell"
-              className="h-48 md:h-56 lg:h-64"
+              className="h-64 md:h-72 lg:h-80"
             />
           </motion.div>
 
