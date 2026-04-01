@@ -260,6 +260,7 @@ const AdminDashboard = () => {
             <Button variant="outline" size="icon" onClick={fetchAll}>
               <RefreshCw size={14} />
             </Button>
+            <CreateOrderDialog clients={clients} onCreated={fetchAll} />
           </div>
         </div>
 
