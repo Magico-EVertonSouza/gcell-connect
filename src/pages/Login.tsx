@@ -52,7 +52,7 @@ const Login = () => {
 
         <div className="bg-card border border-border rounded-2xl p-8">
           <div className="flex items-center justify-center mb-6">
-          <img src="/logo.png" alt="GCell" className="h-20 md:h-24 lg:h-28" />
+          <img src="/logo.png" alt="GCell" className="h-auto max-h-24" />
           </div>
           
           <h1 className="text-2xl font-heading font-bold text-foreground mb-2">
