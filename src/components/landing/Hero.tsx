@@ -20,7 +20,7 @@ const Hero = () => {
           >
             <img
               src="/logo.png"
-              alt="Laboratório GCell"
+              alt="Laboratório GGCell"
               className="h-64 md:h-72 lg:h-80"
             />
           </motion.div>
