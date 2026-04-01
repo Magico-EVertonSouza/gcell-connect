@@ -49,7 +49,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">WhatsApp</p>
-                  <p className="text-foreground font-medium">(00) 00000-0000</p>
+                  <p className="text-foreground font-medium">(351) 936660681</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -67,7 +67,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Endereço</p>
-                  <p className="text-foreground font-medium">Sua cidade, Estado</p>
+                  <p className="text-foreground font-medium">Rio de Janeiro,RJ</p>
                 </div>
               </div>
             </div>
