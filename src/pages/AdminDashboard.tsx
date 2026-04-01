@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import {
   LogOut, Users, FileText, CalendarDays, Search,
-  Loader2, Smartphone, Clock, ChevronDown, RefreshCw
+  Loader2, Smartphone, Clock, ChevronDown, RefreshCw,
+  Plus, XCircle, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
