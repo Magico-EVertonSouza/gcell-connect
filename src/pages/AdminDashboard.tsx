@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Tables, Enums } from "@/integrations/supabase/types";
+import CreateOrderDialog from "@/components/admin/CreateOrderDialog";
 
 const statusLabels: Record<string, string> = {
   received: "Recebido",
@@ -259,6 +260,7 @@ const AdminDashboard = () => {
             <Button variant="outline" size="icon" onClick={fetchAll}>
               <RefreshCw size={14} />
             </Button>
+            <CreateOrderDialog clients={clients} onCreated={fetchAll} />
           </div>
         </div>
 
