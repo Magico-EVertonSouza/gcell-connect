@@ -31,7 +31,7 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mb-6 flex justify-center"
           >
-            <img src="/logo.png" alt="Laboratório GCell" className="h-32 md:h-40 lg:h-48" />
+            <img src="/logo.png" alt="Laboratório GCell" className="h-40 md:h-52 lg:h-64" />
           </motion.div>
 
           <motion.p
