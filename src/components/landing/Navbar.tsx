@@ -20,7 +20,7 @@ const Navbar = () => {
         
         {/* LOGO */}
         <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="h-12 w-auto" />
+          <img src="/logo.png" alt="Logo" className="h-20 w-auto" />
           <span className="font-heading font-bold text-foreground text-lg">
             GCell
           </span>
