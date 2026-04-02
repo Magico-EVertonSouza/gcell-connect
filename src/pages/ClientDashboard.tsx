@@ -50,6 +50,8 @@ const ClientDashboard = () => {
   const [device, setDevice] = useState("");
   const [problem, setProblem] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [confirmationOS, setConfirmationOS] = useState<string | null>(null);
+  const [confirmationAppt, setConfirmationAppt] = useState<{ date: string; time: string; device: string } | null>(null);
 
   // Schedule state
   const [schedDate, setSchedDate] = useState<Date | undefined>();
