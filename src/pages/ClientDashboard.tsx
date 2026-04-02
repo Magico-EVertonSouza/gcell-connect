@@ -68,6 +68,10 @@ const ClientDashboard = () => {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
+    if (profile?.phone) setPhone(profile.phone);
+  }, [profile]);
+
+  useEffect(() => {
     if (user) fetchData();
   }, [user]);
 
