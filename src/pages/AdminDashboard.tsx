@@ -195,7 +195,7 @@ const AdminDashboard = () => {
               <span className="text-primary-foreground font-heading font-black text-sm">G</span>
             </div>
             <div>
-              <span className="font-heading font-bold text-foreground">GCell</span>
+              <img src="/logo.png" alt="Logo" className="h-10" />
               <Badge className="ml-2 bg-primary/20 text-primary border-primary/30 text-[10px]">Admin</Badge>
             </div>
           </div>
