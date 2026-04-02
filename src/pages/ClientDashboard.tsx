@@ -50,6 +50,8 @@ const ClientDashboard = () => {
   const [device, setDevice] = useState("");
   const [problem, setProblem] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [confirmationOS, setConfirmationOS] = useState<string | null>(null);
+  const [confirmationAppt, setConfirmationAppt] = useState<{ date: string; time: string; device: string } | null>(null);
 
   // Schedule state
   const [schedDate, setSchedDate] = useState<Date | undefined>();
@@ -96,19 +98,19 @@ const ClientDashboard = () => {
     e.preventDefault();
     if (!user) return;
     setSubmitting(true);
-    const { error } = await supabase.from("service_orders").insert({
+    const { data, error } = await supabase.from("service_orders").insert({
       user_id: user.id,
       device,
       problem,
       order_number: "temp",
-    });
+    }).select("order_number").single();
     if (error) {
       toast.error("Erro ao enviar solicitação.");
     } else {
-      toast.success("Solicitação enviada! Entraremos em contato para o diagnóstico.");
       setDevice("");
       setProblem("");
       setShowNewOrder(false);
+      setConfirmationOS(data.order_number);
       fetchData();
     }
     setSubmitting(false);
@@ -132,7 +134,11 @@ const ClientDashboard = () => {
         toast.error("Erro ao agendar.");
       }
     } else {
-      toast.success("Agendamento realizado com sucesso!");
+      setConfirmationAppt({
+        date: format(schedDate, "dd/MM/yyyy", { locale: ptBR }),
+        time: schedTime,
+        device: schedDevice,
+      });
       setSchedDate(undefined);
       setSchedTime("");
       setSchedDevice("");
@@ -378,6 +384,71 @@ const ClientDashboard = () => {
                   </Button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+
+        {/* OS Confirmation Modal */}
+        {confirmationOS && (
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card border border-border rounded-2xl p-6 w-full max-w-md text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle size={32} className="text-primary" />
+              </div>
+              <h2 className="text-xl font-heading font-bold text-foreground mb-2">Solicitação Enviada!</h2>
+              <p className="text-muted-foreground text-sm mb-4">
+                Sua ordem de serviço foi criada com sucesso. Use o código abaixo para acompanhar o status do seu reparo.
+              </p>
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-4">
+                <p className="text-xs text-muted-foreground mb-1">Código da Ordem de Serviço</p>
+                <p className="text-2xl font-heading font-black text-primary tracking-wider">{confirmationOS}</p>
+              </div>
+              <p className="text-muted-foreground text-xs mb-6">
+                Acesse <Link to="/acompanhar" className="text-primary underline">Acompanhar Reparo</Link> a qualquer momento para ver o progresso.
+              </p>
+              <Button variant="hero" className="w-full" onClick={() => setConfirmationOS(null)}>
+                Entendi
+              </Button>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Appointment Confirmation Modal */}
+        {confirmationAppt && (
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card border border-border rounded-2xl p-6 w-full max-w-md text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <CalendarDays size={32} className="text-primary" />
+              </div>
+              <h2 className="text-xl font-heading font-bold text-foreground mb-2">Agendamento Confirmado!</h2>
+              <p className="text-muted-foreground text-sm mb-4">
+                Seu atendimento foi agendado com sucesso. Aguarde a confirmação.
+              </p>
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-6 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Aparelho:</span>
+                  <span className="text-foreground font-medium">{confirmationAppt.device}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Data:</span>
+                  <span className="text-foreground font-medium">{confirmationAppt.date}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Horário:</span>
+                  <span className="text-foreground font-medium">{confirmationAppt.time}</span>
+                </div>
+              </div>
+              <Button variant="hero" className="w-full" onClick={() => setConfirmationAppt(null)}>
+                Entendi
+              </Button>
             </motion.div>
           </div>
         )}
