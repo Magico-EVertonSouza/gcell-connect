@@ -112,8 +112,13 @@ const ClientDashboard = () => {
     if (error) {
       toast.error("Erro ao enviar solicitação.");
     } else {
+      // Save phone to profile
+      if (phone) {
+        await supabase.from("profiles").update({ phone }).eq("user_id", user.id);
+      }
       setDevice("");
       setProblem("");
+      setPhone(phone); // keep phone for next time
       setShowNewOrder(false);
       setConfirmationOS(data.order_number);
       fetchData();
