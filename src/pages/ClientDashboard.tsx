@@ -180,8 +180,7 @@ const ClientDashboard = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-xl">
         <div className="container mx-auto px-4 flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            </div>
-            <img src="/logo.png" alt="Logo" className="h-22" />
+            <img src="/logo.png" alt="Logo" className="h-20" />
           </div>
           <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={handleLogout}>
             <LogOut size={16} />
