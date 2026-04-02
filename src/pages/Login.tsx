@@ -24,7 +24,19 @@ const Login = () => {
       if (isLogin) {
         await signIn(email, password);
         toast.success("Login realizado com sucesso!");
-        navigate("/dashboard");
+        // Check if user is admin to redirect accordingly
+        const { data: { user: loggedUser } } = await supabase.auth.getUser();
+        if (loggedUser) {
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", loggedUser.id)
+            .eq("role", "admin")
+            .maybeSingle();
+          navigate(roleData ? "/admin" : "/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         await signUp(email, password, name, phone);
         toast.success("Conta criada! Verifique seu email para confirmar.");
