@@ -49,6 +49,7 @@ const ClientDashboard = () => {
   const [loadingData, setLoadingData] = useState(true);
   const [device, setDevice] = useState("");
   const [problem, setProblem] = useState("");
+  const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [confirmationOS, setConfirmationOS] = useState<string | null>(null);
   const [confirmationAppt, setConfirmationAppt] = useState<{ date: string; time: string; device: string } | null>(null);
@@ -65,6 +66,10 @@ const ClientDashboard = () => {
       navigate("/login");
     }
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (profile?.phone) setPhone(profile.phone);
+  }, [profile]);
 
   useEffect(() => {
     if (user) fetchData();
@@ -107,8 +112,13 @@ const ClientDashboard = () => {
     if (error) {
       toast.error("Erro ao enviar solicitação.");
     } else {
+      // Save phone to profile
+      if (phone) {
+        await supabase.from("profiles").update({ phone }).eq("user_id", user.id);
+      }
       setDevice("");
       setProblem("");
+      setPhone(phone); // keep phone for next time
       setShowNewOrder(false);
       setConfirmationOS(data.order_number);
       fetchData();
@@ -134,6 +144,10 @@ const ClientDashboard = () => {
         toast.error("Erro ao agendar.");
       }
     } else {
+      // Save phone to profile
+      if (phone) {
+        await supabase.from("profiles").update({ phone }).eq("user_id", user.id);
+      }
       setConfirmationAppt({
         date: format(schedDate, "dd/MM/yyyy", { locale: ptBR }),
         time: schedTime,
@@ -294,6 +308,14 @@ const ClientDashboard = () => {
                     required
                     className="bg-background border-border"
                   />
+                  <Input
+                    placeholder="Telefone para contato (ex: 11 99999-9999)"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    type="tel"
+                    className="bg-background border-border"
+                  />
                   <Textarea
                     placeholder="Descrição (opcional)"
                     value={schedDesc}
@@ -365,6 +387,14 @@ const ClientDashboard = () => {
                   onChange={(e) => setDevice(e.target.value)}
                   className="bg-background border-border"
                   required
+                />
+                <Input
+                  placeholder="Telefone para contato (ex: 11 99999-9999)"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="bg-background border-border"
+                  required
+                  type="tel"
                 />
                 <Textarea
                   placeholder="Descreva o problema"
