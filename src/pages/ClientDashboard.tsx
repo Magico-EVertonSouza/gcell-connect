@@ -134,7 +134,11 @@ const ClientDashboard = () => {
         toast.error("Erro ao agendar.");
       }
     } else {
-      toast.success("Agendamento realizado com sucesso!");
+      setConfirmationAppt({
+        date: format(schedDate, "dd/MM/yyyy", { locale: ptBR }),
+        time: schedTime,
+        device: schedDevice,
+      });
       setSchedDate(undefined);
       setSchedTime("");
       setSchedDevice("");
