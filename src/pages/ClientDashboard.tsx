@@ -315,6 +315,7 @@ const ClientDashboard = () => {
                     required
                     type="tel"
                     className="bg-background border-border"
+                  />
                   <Textarea
                     placeholder="Descrição (opcional)"
                     value={schedDesc}
