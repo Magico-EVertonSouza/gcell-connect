@@ -308,6 +308,13 @@ const ClientDashboard = () => {
                     required
                     className="bg-background border-border"
                   />
+                  <Input
+                    placeholder="Telefone para contato (ex: 11 99999-9999)"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    type="tel"
+                    className="bg-background border-border"
                   <Textarea
                     placeholder="Descrição (opcional)"
                     value={schedDesc}
