@@ -144,6 +144,10 @@ const ClientDashboard = () => {
         toast.error("Erro ao agendar.");
       }
     } else {
+      // Save phone to profile
+      if (phone) {
+        await supabase.from("profiles").update({ phone }).eq("user_id", user.id);
+      }
       setConfirmationAppt({
         date: format(schedDate, "dd/MM/yyyy", { locale: ptBR }),
         time: schedTime,
