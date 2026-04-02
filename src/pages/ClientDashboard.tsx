@@ -98,19 +98,19 @@ const ClientDashboard = () => {
     e.preventDefault();
     if (!user) return;
     setSubmitting(true);
-    const { error } = await supabase.from("service_orders").insert({
+    const { data, error } = await supabase.from("service_orders").insert({
       user_id: user.id,
       device,
       problem,
       order_number: "temp",
-    });
+    }).select("order_number").single();
     if (error) {
       toast.error("Erro ao enviar solicitação.");
     } else {
-      toast.success("Solicitação enviada! Entraremos em contato para o diagnóstico.");
       setDevice("");
       setProblem("");
       setShowNewOrder(false);
+      setConfirmationOS(data.order_number);
       fetchData();
     }
     setSubmitting(false);
