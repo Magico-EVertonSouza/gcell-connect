@@ -183,7 +183,7 @@ const ClientDashboard = () => {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-heading font-black text-sm">G</span>
             </div>
-            <span className="font-heading font-bold text-foreground">GCell</span>
+            <img src="/logo.png" alt="Logo" className="h-10" />
           </div>
           <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={handleLogout}>
             <LogOut size={16} />
