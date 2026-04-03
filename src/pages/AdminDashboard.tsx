@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {
   LogOut, Users, FileText, CalendarDays, Search,
   Loader2, Smartphone, Clock, ChevronDown, RefreshCw,
-  Plus, XCircle, CheckCircle
+  Plus, XCircle, CheckCircle, Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -143,6 +143,21 @@ const AdminDashboard = () => {
       toast.error("Erro ao gerar ordem de serviço.");
     } else {
       toast.success(`OS ${data.order_number} gerada com sucesso!`);
+      fetchAll();
+    }
+    setUpdatingId(null);
+  };
+
+  const deleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Tem certeza que deseja remover o cliente "${userName}"? Todos os dados (ordens, agendamentos) serão excluídos permanentemente.`)) return;
+    setUpdatingId(userId);
+    const { data, error } = await supabase.functions.invoke("delete-user", {
+      body: { userId },
+    });
+    if (error || data?.error) {
+      toast.error(data?.error || "Erro ao remover usuário.");
+    } else {
+      toast.success(`Cliente "${userName}" removido com sucesso.`);
       fetchAll();
     }
     setUpdatingId(null);
@@ -353,9 +368,19 @@ const AdminDashboard = () => {
                             <p className="text-muted-foreground text-xs">{client.phone || "Sem telefone"}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-foreground font-bold text-sm">{clientOrders.length}</p>
-                          <p className="text-muted-foreground text-xs">ordens</p>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className="text-foreground font-bold text-sm">{clientOrders.length}</p>
+                            <p className="text-muted-foreground text-xs">ordens</p>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            disabled={updatingId === client.user_id}
+                            onClick={() => deleteUser(client.user_id, client.full_name)}
+                          >
+                            {updatingId === client.user_id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                          </Button>
                         </div>
                       </div>
                       {clientOrders.length > 0 && (
