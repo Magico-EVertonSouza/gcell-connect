@@ -368,9 +368,19 @@ const AdminDashboard = () => {
                             <p className="text-muted-foreground text-xs">{client.phone || "Sem telefone"}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-foreground font-bold text-sm">{clientOrders.length}</p>
-                          <p className="text-muted-foreground text-xs">ordens</p>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className="text-foreground font-bold text-sm">{clientOrders.length}</p>
+                            <p className="text-muted-foreground text-xs">ordens</p>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            disabled={updatingId === client.user_id}
+                            onClick={() => deleteUser(client.user_id, client.full_name)}
+                          >
+                            {updatingId === client.user_id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                          </Button>
                         </div>
                       </div>
                       {clientOrders.length > 0 && (
