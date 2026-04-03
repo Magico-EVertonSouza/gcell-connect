@@ -1,0 +1,1 @@
+ALTER TABLE public.service_orders ALTER COLUMN order_number SET DEFAULT gen_random_uuid()::text;
