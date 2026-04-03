@@ -110,7 +110,8 @@ const ClientDashboard = () => {
       order_number: "temp",
     }).select("order_number").single();
     if (error) {
-      toast.error("Erro ao enviar solicitação.");
+      console.error("Erro ao criar OS:", error);
+      toast.error("Erro ao enviar solicitação: " + error.message);
     } else {
       // Save phone to profile
       if (phone) {
