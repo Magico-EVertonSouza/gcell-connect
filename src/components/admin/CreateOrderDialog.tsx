@@ -59,7 +59,6 @@ const CreateOrderDialog = ({ clients, onCreated }: CreateOrderDialogProps) => {
         user_id: form.userId,
         device,
         problem,
-        order_number: "TEMP",
         estimated_date: form.estimatedDate || null,
         notes: form.notes.trim() || null,
       })

@@ -107,7 +107,6 @@ const ClientDashboard = () => {
       user_id: user.id,
       device,
       problem,
-      order_number: "temp",
     }).select("order_number").single();
     if (error) {
       console.error("Erro ao criar OS:", error);

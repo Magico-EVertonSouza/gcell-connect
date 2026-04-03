@@ -98,7 +98,7 @@ export type Database = {
           estimated_date?: string | null
           id?: string
           notes?: string | null
-          order_number: string
+          order_number?: string
           problem: string
           status?: Database["public"]["Enums"]["service_status"]
           updated_at?: string
