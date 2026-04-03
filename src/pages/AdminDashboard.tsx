@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {
   LogOut, Users, FileText, CalendarDays, Search,
   Loader2, Smartphone, Clock, ChevronDown, RefreshCw,
-  Plus, XCircle, CheckCircle
+  Plus, XCircle, CheckCircle, Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
