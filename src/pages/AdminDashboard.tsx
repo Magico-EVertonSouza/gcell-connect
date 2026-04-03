@@ -135,7 +135,6 @@ const AdminDashboard = () => {
         user_id: appt.user_id,
         device: appt.device,
         problem: appt.description || "Conforme agendamento",
-        order_number: "TEMP", // trigger will generate
       })
       .select()
       .single();
