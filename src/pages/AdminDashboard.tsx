@@ -148,6 +148,21 @@ const AdminDashboard = () => {
     setUpdatingId(null);
   };
 
+  const deleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Tem certeza que deseja remover o cliente "${userName}"? Todos os dados (ordens, agendamentos) serão excluídos permanentemente.`)) return;
+    setUpdatingId(userId);
+    const { data, error } = await supabase.functions.invoke("delete-user", {
+      body: { userId },
+    });
+    if (error || data?.error) {
+      toast.error(data?.error || "Erro ao remover usuário.");
+    } else {
+      toast.success(`Cliente "${userName}" removido com sucesso.`);
+      fetchAll();
+    }
+    setUpdatingId(null);
+  };
+
   const handleLogout = async () => {
     await signOut();
     navigate("/");
