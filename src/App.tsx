@@ -27,6 +27,7 @@ const App = () => (
             <Route path="/dashboard" element={<ClientDashboard />} />
             <Route path="/acompanhar" element={<TrackRepair />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/loja" element={<Store />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
