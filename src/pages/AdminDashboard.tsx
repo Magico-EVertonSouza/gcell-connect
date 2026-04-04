@@ -200,6 +200,7 @@ const AdminDashboard = () => {
     { key: "orders" as const, label: "Ordens de Serviço", icon: FileText, count: orders.length },
     { key: "clients" as const, label: "Clientes", icon: Users, count: clients.length },
     { key: "schedule" as const, label: "Agenda", icon: CalendarDays, count: todayAppointments.length },
+    { key: "store" as const, label: "Loja", icon: ShoppingBag, count: null },
   ];
 
   return (
