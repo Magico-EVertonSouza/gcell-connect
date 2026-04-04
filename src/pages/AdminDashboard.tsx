@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {
   LogOut, Users, FileText, CalendarDays, Search,
   Loader2, Smartphone, Clock, ChevronDown, RefreshCw,
-  Plus, XCircle, CheckCircle, Trash2
+  Plus, XCircle, CheckCircle, Trash2, ShoppingBag
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,9 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Tables, Enums } from "@/integrations/supabase/types";
 import CreateOrderDialog from "@/components/admin/CreateOrderDialog";
+import StoreBrands from "@/components/admin/StoreBrands";
+import StoreModels from "@/components/admin/StoreModels";
+import StoreProducts from "@/components/admin/StoreProducts";
 
 const statusLabels: Record<string, string> = {
   received: "Recebido",
@@ -51,7 +54,7 @@ const AdminDashboard = () => {
   const { isAdmin, loading: adminLoading } = useAdmin();
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState<"orders" | "clients" | "schedule">("orders");
+  const [tab, setTab] = useState<"orders" | "clients" | "schedule" | "store">("orders");
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
   const [clients, setClients] = useState<Profile[]>([]);
   const [profileMap, setProfileMap] = useState<ProfileMap>({});
@@ -197,6 +200,7 @@ const AdminDashboard = () => {
     { key: "orders" as const, label: "Ordens de Serviço", icon: FileText, count: orders.length },
     { key: "clients" as const, label: "Clientes", icon: Users, count: clients.length },
     { key: "schedule" as const, label: "Agenda", icon: CalendarDays, count: todayAppointments.length },
+    { key: "store" as const, label: "Loja", icon: ShoppingBag, count: null },
   ];
 
   return (
@@ -254,7 +258,7 @@ const AdminDashboard = () => {
               >
                 <t.icon size={14} />
                 <span className="hidden sm:inline">{t.label}</span>
-                <span className="text-xs opacity-70">({t.count})</span>
+                {t.count !== null && <span className="text-xs opacity-70">({t.count})</span>}
               </button>
             ))}
           </div>
@@ -520,6 +524,30 @@ const AdminDashboard = () => {
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* STORE TAB */}
+            {tab === "store" && (
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-sm font-heading font-bold text-foreground mb-3 flex items-center gap-2">
+                    <ShoppingBag size={14} className="text-primary" /> Marcas
+                  </h3>
+                  <StoreBrands />
+                </div>
+                <div>
+                  <h3 className="text-sm font-heading font-bold text-foreground mb-3 flex items-center gap-2">
+                    <Smartphone size={14} className="text-primary" /> Modelos
+                  </h3>
+                  <StoreModels />
+                </div>
+                <div>
+                  <h3 className="text-sm font-heading font-bold text-foreground mb-3 flex items-center gap-2">
+                    <ShoppingBag size={14} className="text-primary" /> Produtos
+                  </h3>
+                  <StoreProducts />
                 </div>
               </div>
             )}

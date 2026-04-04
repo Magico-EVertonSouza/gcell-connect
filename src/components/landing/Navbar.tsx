@@ -4,9 +4,10 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
-const navLinks = [
+const navLinks: { label: string; href: string; isRoute?: boolean }[] = [
   { label: "Serviços", href: "#servicos" },
   { label: "Como Funciona", href: "#como-funciona" },
+  { label: "Loja", href: "/loja", isRoute: true },
   { label: "Diferenciais", href: "#diferenciais" },
   { label: "Contato", href: "#contato" },
 ];
@@ -27,13 +28,15 @@ const Navbar = () => {
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium"
-            >
-              {link.label}
-            </a>
+            link.isRoute ? (
+              <Link key={link.href} to={link.href} className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
+                {link.label}
+              </Link>
+            ) : (
+              <a key={link.href} href={link.href} className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
+                {link.label}
+              </a>
+            )
           ))}
           <Link to="/login">
             <Button variant="hero" size="sm">Área do Cliente</Button>
@@ -60,14 +63,15 @@ const Navbar = () => {
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
               {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium py-2"
-                >
-                  {link.label}
-                </a>
+                link.isRoute ? (
+                  <Link key={link.href} to={link.href} onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium py-2">
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a key={link.href} href={link.href} onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium py-2">
+                    {link.label}
+                  </a>
+                )
               ))}
               <Link to="/login" onClick={() => setIsOpen(false)}>
                 <Button variant="hero" size="sm" className="w-full">
