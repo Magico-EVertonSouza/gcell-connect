@@ -54,7 +54,7 @@ const AdminDashboard = () => {
   const { isAdmin, loading: adminLoading } = useAdmin();
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState<"orders" | "clients" | "schedule">("orders");
+  const [tab, setTab] = useState<"orders" | "clients" | "schedule" | "store">("orders");
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
   const [clients, setClients] = useState<Profile[]>([]);
   const [profileMap, setProfileMap] = useState<ProfileMap>({});
