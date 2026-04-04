@@ -17,6 +17,9 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Tables, Enums } from "@/integrations/supabase/types";
 import CreateOrderDialog from "@/components/admin/CreateOrderDialog";
+import StoreBrands from "@/components/admin/StoreBrands";
+import StoreModels from "@/components/admin/StoreModels";
+import StoreProducts from "@/components/admin/StoreProducts";
 
 const statusLabels: Record<string, string> = {
   received: "Recebido",
