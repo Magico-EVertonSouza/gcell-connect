@@ -258,7 +258,7 @@ const AdminDashboard = () => {
               >
                 <t.icon size={14} />
                 <span className="hidden sm:inline">{t.label}</span>
-                <span className="text-xs opacity-70">({t.count})</span>
+                {t.count !== null && <span className="text-xs opacity-70">({t.count})</span>}
               </button>
             ))}
           </div>
