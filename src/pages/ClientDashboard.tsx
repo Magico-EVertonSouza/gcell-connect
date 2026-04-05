@@ -44,7 +44,7 @@ const ClientDashboard = () => {
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [showNewOrder, setShowNewOrder] = useState(false);
-  const [tab, setTab] = useState<"orders" | "schedule">("orders");
+  const [tab, setTab] = useState<"orders" | "schedule" | "store">("orders");
   const [orders, setOrders] = useState<Tables<"service_orders">[]>([]);
   const [appointments, setAppointments] = useState<Tables<"appointments">[]>([]);
   const [loadingData, setLoadingData] = useState(true);
