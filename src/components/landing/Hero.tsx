@@ -39,13 +39,13 @@ const Hero = () => {
               </Button>
             </Link>
             <Link to="/loja" className="w-full sm:w-auto">
-              <Button variant="hero" size="lg" className="text-base px-8 py-6 w-full">
+              <Button variant="hero-outline" size="lg" className="text-base px-8 py-6 w-full">
                 Loja de Acessórios
                 <ChevronRight size={18} />
               </Button>
             </Link>
             <Link to="/acompanhar" className="w-full sm:w-auto">
-              <Button variant="hero-outline" size="lg" className="text-base px-8 py-6 w-full">
+              <Button variant="hero" size="lg" className="text-base px-8 py-6 w-full">
                 Acompanhar Reparo
               </Button>
             </Link>
