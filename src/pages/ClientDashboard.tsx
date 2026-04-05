@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import {
   Plus, Clock, CheckCircle, Wrench, LogOut,
-  Smartphone, CalendarDays, FileText, Loader2
+  Smartphone, CalendarDays, FileText, Loader2, ShoppingBag
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,6 +15,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Tables } from "@/integrations/supabase/types";
+import ClientStore from "@/components/client/ClientStore";
 
 const statusColors: Record<string, string> = {
   received: "bg-blue-500",
@@ -43,7 +44,7 @@ const ClientDashboard = () => {
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [showNewOrder, setShowNewOrder] = useState(false);
-  const [tab, setTab] = useState<"orders" | "schedule">("orders");
+  const [tab, setTab] = useState<"orders" | "schedule" | "store">("orders");
   const [orders, setOrders] = useState<Tables<"service_orders">[]>([]);
   const [appointments, setAppointments] = useState<Tables<"appointments">[]>([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -220,6 +221,13 @@ const ClientDashboard = () => {
               <CalendarDays size={14} className="inline mr-2" />
               Agendamentos
             </button>
+            <button
+              onClick={() => setTab("store")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "store" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <ShoppingBag size={14} className="inline mr-2" />
+              Loja
+            </button>
           </div>
 
           {tab === "orders" && (
@@ -366,6 +374,8 @@ const ClientDashboard = () => {
               </div>
             </div>
           )}
+
+          {tab === "store" && <ClientStore />}
         </motion.div>
 
         {/* New order modal */}

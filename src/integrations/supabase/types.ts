@@ -97,6 +97,47 @@ export type Database = {
           },
         ]
       }
+      parts: {
+        Row: {
+          created_at: string
+          id: string
+          min_quantity: number
+          model_id: string
+          name: string
+          price: number
+          quantity: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          min_quantity?: number
+          model_id: string
+          name: string
+          price?: number
+          quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          min_quantity?: number
+          model_id?: string
+          name?: string
+          price?: number
+          quantity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parts_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_models: {
         Row: {
           id: string
@@ -194,6 +235,7 @@ export type Database = {
           entry_date: string
           estimated_date: string | null
           id: string
+          model_id: string | null
           notes: string | null
           order_number: string
           problem: string
@@ -207,6 +249,7 @@ export type Database = {
           entry_date?: string
           estimated_date?: string | null
           id?: string
+          model_id?: string | null
           notes?: string | null
           order_number?: string
           problem: string
@@ -220,6 +263,7 @@ export type Database = {
           entry_date?: string
           estimated_date?: string | null
           id?: string
+          model_id?: string | null
           notes?: string | null
           order_number?: string
           problem?: string
@@ -227,7 +271,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
