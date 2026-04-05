@@ -80,10 +80,13 @@ const AdminDashboard = () => {
 
   const fetchAll = async () => {
     setLoadingData(true);
-    const [ordersRes, clientsRes, apptsRes] = await Promise.all([
+    const [ordersRes, clientsRes, apptsRes, partsRes, modelsRes, brandsRes] = await Promise.all([
       supabase.from("service_orders").select("*").order("created_at", { ascending: false }),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("appointments").select("*").order("appointment_date", { ascending: true }),
+      supabase.from("parts").select("id, name, model_id, quantity, min_quantity"),
+      supabase.from("models").select("id, name, brand_id"),
+      supabase.from("brands").select("id, name"),
     ]);
     setOrders(ordersRes.data ?? []);
     const profs = clientsRes.data ?? [];
@@ -92,6 +95,9 @@ const AdminDashboard = () => {
     profs.forEach(p => { map[p.user_id] = p; });
     setProfileMap(map);
     setAppointments(apptsRes.data ?? []);
+    setParts((partsRes.data as typeof parts) ?? []);
+    setPartsModels(modelsRes.data ?? []);
+    setPartsBrands(brandsRes.data ?? []);
     setLoadingData(false);
   };
 
