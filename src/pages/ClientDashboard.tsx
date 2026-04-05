@@ -15,6 +15,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Tables } from "@/integrations/supabase/types";
+import ClientStore from "@/components/client/ClientStore";
 
 const statusColors: Record<string, string> = {
   received: "bg-blue-500",
