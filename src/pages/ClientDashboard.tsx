@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import {
   Plus, Clock, CheckCircle, Wrench, LogOut,
-  Smartphone, CalendarDays, FileText, Loader2
+  Smartphone, CalendarDays, FileText, Loader2, ShoppingBag
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
