@@ -534,6 +534,12 @@ const AdminDashboard = () => {
               <div className="space-y-8">
                 <div>
                   <h3 className="text-sm font-heading font-bold text-foreground mb-3 flex items-center gap-2">
+                    <AlertTriangle size={14} className="text-primary" /> Estoque de Peças
+                  </h3>
+                  <StoreInventory />
+                </div>
+                <div>
+                  <h3 className="text-sm font-heading font-bold text-foreground mb-3 flex items-center gap-2">
                     <ShoppingBag size={14} className="text-primary" /> Marcas
                   </h3>
                   <StoreBrands />

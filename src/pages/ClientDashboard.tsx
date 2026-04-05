@@ -374,6 +374,8 @@ const ClientDashboard = () => {
               </div>
             </div>
           )}
+
+          {tab === "store" && <ClientStore />}
         </motion.div>
 
         {/* New order modal */}
