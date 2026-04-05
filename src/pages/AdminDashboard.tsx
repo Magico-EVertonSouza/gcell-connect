@@ -20,6 +20,7 @@ import CreateOrderDialog from "@/components/admin/CreateOrderDialog";
 import StoreBrands from "@/components/admin/StoreBrands";
 import StoreModels from "@/components/admin/StoreModels";
 import StoreProducts from "@/components/admin/StoreProducts";
+import StoreInventory from "@/components/admin/StoreInventory";
 
 const statusLabels: Record<string, string> = {
   received: "Recebido",
