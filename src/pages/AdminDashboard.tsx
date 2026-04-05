@@ -60,6 +60,9 @@ const AdminDashboard = () => {
   const [clients, setClients] = useState<Profile[]>([]);
   const [profileMap, setProfileMap] = useState<ProfileMap>({});
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [parts, setParts] = useState<{ id: string; name: string; model_id: string; quantity: number; min_quantity: number }[]>([]);
+  const [partsModels, setPartsModels] = useState<{ id: string; name: string; brand_id: string }[]>([]);
+  const [partsBrands, setPartsBrands] = useState<{ id: string; name: string }[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
