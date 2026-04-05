@@ -323,6 +323,33 @@ const AdminDashboard = () => {
                               Cliente: {profileMap[order.user_id].full_name} {profileMap[order.user_id].phone && `| ${profileMap[order.user_id].phone}`}
                             </p>
                           )}
+                          {(() => {
+                            const deviceLower = order.device.toLowerCase();
+                            const matchedModel = partsModels.find(m => deviceLower.includes(m.name.toLowerCase()));
+                            if (!matchedModel) return null;
+                            const modelParts = parts.filter(p => p.model_id === matchedModel.id);
+                            if (modelParts.length === 0) return (
+                              <span className="inline-flex items-center gap-1 text-[10px] mt-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                                Sem peças cadastradas para {matchedModel.name}
+                              </span>
+                            );
+                            const lowStock = modelParts.filter(p => p.quantity <= p.min_quantity);
+                            const inStock = modelParts.filter(p => p.quantity > p.min_quantity);
+                            return (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {inStock.length > 0 && (
+                                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                                    <CheckCircle size={10} /> {inStock.length} peça(s) em estoque
+                                  </span>
+                                )}
+                                {lowStock.length > 0 && (
+                                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">
+                                    <AlertTriangle size={10} /> {lowStock.length} peça(s) precisam compra
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
