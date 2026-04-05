@@ -221,6 +221,13 @@ const ClientDashboard = () => {
               <CalendarDays size={14} className="inline mr-2" />
               Agendamentos
             </button>
+            <button
+              onClick={() => setTab("store")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "store" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <ShoppingBag size={14} className="inline mr-2" />
+              Loja
+            </button>
           </div>
 
           {tab === "orders" && (
